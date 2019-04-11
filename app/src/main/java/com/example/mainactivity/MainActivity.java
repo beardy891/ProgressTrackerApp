@@ -1,10 +1,8 @@
 package com.example.mainactivity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.SystemClock;
-import android.support.annotation.RequiresPermission;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,34 +11,29 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.mainactivity.notActivities.ReadWriteTotalTime;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.net.InetAddress;
+public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE EVERYTHING LOCAL
+    private static final String TAG = MainActivity.class.getSimpleName();// TODO: 28.03.2019 what should I LOG
+    private static final String ON_SAVE_INSTANCE_TIME_KEY = "total time";
 
-public class MainActivity extends AppCompatActivity {
     private Button mStartStopButton;
     private Chronometer mPomodoroTimer;
     private TextView mTimeTotal;//todo: visible: 5-10 sek every 25 minutes
-    private TextView mFileContents;
-
-    private static final String ON_SAVE_INSTANCE_TIME_KEY = "total time";
+    private ReadWriteTotalTime mTimeToFile;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {// TODO: create initViews method
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initializeViews();
 
-        final ReadWriteTotalTime timeToFile = new ReadWriteTotalTime(MainActivity.this);
+        // TODO: 27.03.2019 this object is never destroyed because it has reference the whole time
+        /*final ReadWriteTotalTime */mTimeToFile = new ReadWriteTotalTime(MainActivity.this);
 
-        mTimeTotal = findViewById(R.id.tv_time_total);
-        mFileContents = findViewById(R.id.tv_file_contents);
-
-        mStartStopButton = findViewById(R.id.bt_stat_stop_pomodoro);
-        mPomodoroTimer = findViewById(R.id.chrono_pomodoro_timer);
+        // TODO: 28.03.2019 show total time after activity restarts
+        mTimeToFile.showTotalTimeEveryMinute(mPomodoroTimer, mTimeTotal);
 
 
         mStartStopButton.setOnClickListener(new View.OnClickListener() {
@@ -53,29 +46,38 @@ public class MainActivity extends AppCompatActivity {
             //todo: count down from 25 minutes if(00) start countdown from 5 minutes then repeat until stopped
                 startStopChronometer();
 
-                mPomodoroTimer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+                /*mPomodoroTimer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
                     @Override
-                    public void onChronometerTick(Chronometer chronometer) {
-                        showTotalTimeSpent(timeToFile); 
-                    }
-                });//todo: change min api to 24 or make calculations
-        }
+                    public void onChronometerTick(Chronometer chronometer) {*/
+                        mTimeToFile.saveTotalTimeEveryMinute(mPomodoroTimer);
+                        mTimeToFile.showTotalTimeEveryMinute(mPomodoroTimer, mTimeTotal);
+                /*    }
+                });*/
+            }
 
             private void startStopChronometer() {//todo: maybe move outside onClickListener inner class
-                if(!chronometerRunning){ // TODO: 26.03.2019 extract methods, make it more readable
-                    mPomodoroTimer.setBase(SystemClock.elapsedRealtime() - pauseTime); //todo: save the base on rotate
-                    mPomodoroTimer.start();
-                    chronometerRunning = true;
-                    mStartStopButton.setText(getString(R.string.stop_button));
+                if(!chronometerRunning){
+                    startTimer();
                 }
                 else { // stop timer and save time value to file
-                    mPomodoroTimer.stop();
-                    chronometerRunning = false;
-                    pauseTime = SystemClock.elapsedRealtime() - mPomodoroTimer.getBase();
-                    mStartStopButton.setText(getString(R.string.start_button));
-                    //todo: should writing to file be here ?
-                    timeToFile.writeTotalTimeToFile(mPomodoroTimer, MainActivity.this);
+                    stopTimer();
+                    //save when user stops timer
+                    mTimeToFile.writeTotalTimeToFile(mPomodoroTimer);
                 }
+            }
+
+            private void stopTimer() {
+                mPomodoroTimer.stop();
+                chronometerRunning = false;
+                pauseTime = SystemClock.elapsedRealtime() - mPomodoroTimer.getBase();
+                mStartStopButton.setText(getString(R.string.resume_button));
+            }
+
+            private void startTimer() {
+                mPomodoroTimer.setBase(SystemClock.elapsedRealtime() - pauseTime); //todo: save the base on rotate
+                mPomodoroTimer.start();
+                chronometerRunning = true;
+                mStartStopButton.setText(getString(R.string.stop_button));
             }
         });
 
@@ -83,12 +85,19 @@ public class MainActivity extends AppCompatActivity {
             if(savedInstanceState.containsKey(ON_SAVE_INSTANCE_TIME_KEY)){
                 String retrievedText = savedInstanceState.getString(ON_SAVE_INSTANCE_TIME_KEY);
 
-                //todo: think what i need to save
+                // TODO: 28.03.2019 on rotate save time to file and then retrieve it
                 mPomodoroTimer.setText(retrievedText);//set baseline + retrieve text
 
             }
         }
 
+    }
+
+    private void initializeViews() {
+        mTimeTotal = findViewById(R.id.tv_time_total);
+
+        mStartStopButton = findViewById(R.id.bt_stat_stop_pomodoro);
+        mPomodoroTimer = findViewById(R.id.chrono_pomodoro_timer);
     }
 
     @Override
@@ -99,40 +108,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) { //todo: SWITCH
+    public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
-        if(R.id.map_action == itemId){
-            openMap();
-            return true;
+
+        switch(itemId){
+            case R.id.reset_action:
+                resetTime(mTimeToFile);
+                return true;
+            case R.id.browser_action:
+                openBrowser();
+                return true;
+            case R.id.details_action:
+                // TODO: 28.03.2019 open new Activity with all the details(total time, week time, day time, charts to compare weeks months, days ect.)
+                break;
         }
-        else if(R.id.browser_action == itemId){
-            openBrowser();
-            return true;
-        }
+
         return super.onOptionsItemSelected(item);
     }
 
-    private void openBrowser() {//todo: think if i need to pen browser for anything
+    // TODO: 27.03.2019 move openBrowser and resetTime to another class
+    private void openBrowser() {
         String webPageAddress = "https://google.com";//todo:open URL to google sheets(database)
         Uri webPageUri = Uri.parse(webPageAddress);
 
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, webPageUri);
+        Intent openBrowser = new Intent(Intent.ACTION_VIEW, webPageUri);
 
-        if(browserIntent.resolveActivity(getPackageManager()) != null){
-            startActivity(browserIntent);
+        if(openBrowser.resolveActivity(getPackageManager()) != null){
+            startActivity(openBrowser);
         }
     }
 
-    private void openMap(){
-        String locationAddress = "1600 Amphitheatre Parkway, CA";
-        Uri geoLocation = Uri.parse("geo:0, 0?q=" + locationAddress);
-
-        Intent openLocation = new Intent(Intent.ACTION_VIEW);
-        openLocation.setData(geoLocation);
-
-        if(openLocation.resolveActivity(getPackageManager()) != null){
-            startActivity(openLocation);
-        }
+    private void resetTime(ReadWriteTotalTime timeToFile){
+        if(timeToFile != null){
+            timeToFile.resetTotalTime();
+        }// TODO: 05.04.2019 else show error message
 
     }
 
@@ -145,17 +154,8 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);//call after putting in data that u want to save
     }
 
-    //show total time for 5 sek, then make it invisible
-    private void showTotalTimeSpent(ReadWriteTotalTime timeToFile){// TODO: 26.03.2019 remove parameter, refactor
-        mTimeTotal.setVisibility(View.INVISIBLE);
-        //todo: think of a better condition than comparing Strings
-        if(mPomodoroTimer.getText().toString().substring(0, 2).equals("01")){
-            String time = mPomodoroTimer.getText().toString();//todo: refactor
-            mTimeTotal.setText(time);
-
-            mTimeTotal.setVisibility(View.VISIBLE);
-        }
-        // TODO: 26.03.2019 this won't be here
-        mFileContents.setText(timeToFile.readTotalTimeFromFile());
+    public TextView getPomodoroTextView(){
+        return mPomodoroTimer;
     }
+
 }

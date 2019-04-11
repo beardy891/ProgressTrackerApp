@@ -1,18 +1,38 @@
 package com.example.mainactivity;
 
-import android.widget.TextView;
-
 import com.example.mainactivity.notActivities.ReadWriteTotalTime;
-
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ReadWriteTotalTieTest {// TODO: 27.03.2019 change name
-
-
-
+class ReadWriteTotalTimeTest { //instrumentation test
 
     @Test
-    void createFileTest(){
+    void setCorrectStringFormatTest()throws Exception{
+        String expected;
+        String actual;
 
+        // TODO: 05.04.2019 how do i test side effects
+
+        //minutes < 10     seconds < 10
+        expected = "01:01";
+        actual = ReadWriteTotalTime.setCorrectStringFormat();
+        assertEquals(expected, actual);
+
+        //minutes < 10     seconds > 10
+        expected = "01:11";
+        actual = ReadWriteTotalTime.setCorrectStringFormat(/*minutesLessThanTen, secondsMoreThanTen*/);
+        assertEquals(expected, actual);
+
+        //minutes > 10      seconds > 10
+        expected = "11:11";
+        actual = ReadWriteTotalTime.setCorrectStringFormat(/*minutesMoreThanTen, secondsMoreThanTen*/);
+        assertEquals(expected, actual);
+
+        //minutes > 10      seconds < 10
+        expected = "11:01";
+        actual = ReadWriteTotalTime.setCorrectStringFormat(/*minutesMoreThanTen, secondsLessThanTen*/);
+        assertEquals(expected, actual);
     }
+
+
 }
