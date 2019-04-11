@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Progress tracker</string>
     <string name="location">Location</string>
-    <string name="browser">Browser</string>
+    <string name="browser">About Pomodoro</string>
     <string name="default_text">Your name will show up here.</string>
     <string name="stop_button">STOP</string>
     <string name="resume_button">RESUME</string>

@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
-
+// TODO: 11.04.2019 REFACTOR TO Model View Presenter
 import com.example.mainactivity.notActivities.ReadWriteTotalTime;
 
 public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE EVERYTHING LOCAL
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE E
                 resetTime(mTimeToFile);
                 return true;
             case R.id.browser_action:
-                openBrowser();
+                aboutPomodoro();
                 return true;
             case R.id.details_action:
                 // TODO: 28.03.2019 open new Activity with all the details(total time, week time, day time, charts to compare weeks months, days ect.)
@@ -126,9 +126,9 @@ public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE E
         return super.onOptionsItemSelected(item);
     }
 
-    // TODO: 27.03.2019 move openBrowser and resetTime to another class
-    private void openBrowser() {
-        String webPageAddress = "https://google.com";//todo:open URL to google sheets(database)
+    // TODO: 27.03.2019 move aboutPomodoro and resetTime to another class
+    private void aboutPomodoro() {
+        String webPageAddress = "https://en.wikipedia.org/wiki/Pomodoro_Technique";//todo:open URL to google sheets(database)
         Uri webPageUri = Uri.parse(webPageAddress);
 
         Intent openBrowser = new Intent(Intent.ACTION_VIEW, webPageUri);

@@ -2,6 +2,8 @@ package com.example.mainactivity;
 
 import com.example.mainactivity.notActivities.ReadWriteTotalTime;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ReadWriteTotalTimeTest { //instrumentation test
@@ -11,7 +13,8 @@ class ReadWriteTotalTimeTest { //instrumentation test
         String expected;
         String actual;
 
-        // TODO: 05.04.2019 how do i test side effects
+        //todo: MOCK in order to test this class ???
+        // TODO: 05.04.2019 how do i test side effects ????
 
         //minutes < 10     seconds < 10
         expected = "01:01";
