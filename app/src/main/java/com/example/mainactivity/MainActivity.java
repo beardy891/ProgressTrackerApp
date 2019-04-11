@@ -14,6 +14,7 @@ import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 // TODO: 11.04.2019 REFACTOR TO Model View Presenter
+import com.example.mainactivity.notActivities.MenuActions;
 import com.example.mainactivity.notActivities.ReadWriteTotalTime;
 
 public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE EVERYTHING LOCAL
@@ -115,10 +116,10 @@ public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE E
 
         switch(itemId){
             case R.id.reset_action:
-                resetTime(mTimeToFile);
+                MenuActions.resetTime(mTimeToFile, TAG, this);
                 return true;
             case R.id.browser_action:
-                aboutPomodoro();
+                MenuActions.aboutPomodoro(this);
                 return true;
             case R.id.details_action:
                 // TODO: 28.03.2019 open new Activity with all the details(total time, week time, day time, charts to compare weeks months, days ect.)
@@ -129,8 +130,8 @@ public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE E
     }
 
     // TODO: 27.03.2019 move aboutPomodoro and resetTime to another class
-    private void aboutPomodoro() {
-        String webPageAddress = "https://en.wikipedia.org/wiki/Pomodoro_Technique";//todo:open URL to google sheets(database)
+    /*private void aboutPomodoro() {
+        String webPageAddress = "https://en.wikipedia.org/wiki/Pomodoro_Technique";
         Uri webPageUri = Uri.parse(webPageAddress);
 
         Intent openBrowser = new Intent(Intent.ACTION_VIEW, webPageUri);
@@ -138,9 +139,9 @@ public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE E
         if(openBrowser.resolveActivity(getPackageManager()) != null){
             startActivity(openBrowser);
         }
-    }
+    }*/
 
-    private void resetTime(ReadWriteTotalTime timeToFile){
+    /*private void resetTime(ReadWriteTotalTime timeToFile){
         if(timeToFile != null){
             timeToFile.resetTotalTime();
         } else {
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE E
             Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();// TODO: 11.04.2019 think of different ways to display error messages
         }// TODO: 05.04.2019 else show error message
 
-    }
+    }*/
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
