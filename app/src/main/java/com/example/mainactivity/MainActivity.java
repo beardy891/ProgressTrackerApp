@@ -5,12 +5,14 @@ import android.net.Uri;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
+import android.widget.Toast;
 // TODO: 11.04.2019 REFACTOR TO Model View Presenter
 import com.example.mainactivity.notActivities.ReadWriteTotalTime;
 
@@ -141,6 +143,10 @@ public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE E
     private void resetTime(ReadWriteTotalTime timeToFile){
         if(timeToFile != null){
             timeToFile.resetTotalTime();
+        } else {
+            String errorMessage = "System could not reset the time";
+            Log.e(TAG, errorMessage);
+            Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();// TODO: 11.04.2019 think of different ways to display error messages
         }// TODO: 05.04.2019 else show error message
 
     }
