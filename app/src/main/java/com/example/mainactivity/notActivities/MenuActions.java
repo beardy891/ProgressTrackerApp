@@ -18,14 +18,16 @@ public class MenuActions {
         }
     }
 
-    public static void resetTime(ReadWriteTotalTime timeToFile, String TAG, Context context){
+    public static void resetTime(ReadWriteTotalTime timeToFile, /*String TAG,*/ Context context){
         if(timeToFile != null){
             timeToFile.resetTotalTime();
         } else {
             String errorMessage = "System could not reset the time";
+            String TAG = "resetTime()";
             Log.e(TAG, errorMessage);
+
             Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();// TODO: 11.04.2019 think of different ways to display error messages
-        }// TODO: 05.04.2019 else show error message
+        }
 
     }
 }
