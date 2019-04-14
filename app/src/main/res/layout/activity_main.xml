@@ -5,6 +5,7 @@
     android:id="@+id/layout_goals_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/darker_gray"
     tools:context=".MainActivity">
 
 
@@ -12,9 +13,12 @@
         android:id="@+id/chrono_pomodoro_timer"
         android:layout_width="match_parent"
         android:layout_height="223dp"
+        android:background="@android:color/darker_gray"
         android:gravity="center"
         android:text="@string/default_text"
-        android:textSize="72sp" />
+        android:textAlignment="center"
+        android:textSize="72sp"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/bt_stat_stop_pomodoro"
@@ -36,9 +40,8 @@
         android:layout_alignParentBottom="true"
         android:layout_marginTop="300dp"
         android:layout_marginBottom="200dp"
-        android:textSize="26sp"
         android:textColor="@android:color/holo_red_light"
-        android:background="@android:color/black"/>
+        android:textSize="26sp" />
 
 
 </RelativeLayout>

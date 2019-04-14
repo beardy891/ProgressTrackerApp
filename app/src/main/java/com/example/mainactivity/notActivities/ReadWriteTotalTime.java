@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mainactivity.R;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,7 +49,7 @@ public class ReadWriteTotalTime {// TODO: 03.04.2019 mby make it a class that wi
         saveTimeToFile(mFileContents);
     }
 
-    private void saveTimeToFile(String fileContents) {
+    public void saveTimeToFile(String fileContents) {
         FileOutputStream outputStream;
         try {
             outputStream = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
@@ -90,20 +92,21 @@ public class ReadWriteTotalTime {// TODO: 03.04.2019 mby make it a class that wi
     }
 
     private String readTotalTimeFromFile() {
-        StringBuilder text = new StringBuilder();
+        StringBuilder fileContents = new StringBuilder();
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
             String line;
 
             while((line = bufferedReader.readLine()) != null){
-                text.append(line + "\n");
+                fileContents.append(line);
+                fileContents.append("\n");
             }
             bufferedReader.close();
         } catch (IOException ioe){
             ioe.printStackTrace();
         }
-        Log.d(TAG, text.toString());
-        return text.toString();
+        Log.d(TAG, fileContents.toString());
+        return fileContents.toString();
     }
 
     // TODO: 28.03.2019 extract method to see if it is a minute mark
@@ -134,7 +137,7 @@ public class ReadWriteTotalTime {// TODO: 03.04.2019 mby make it a class that wi
         return mMinutesAndSecondsArray[1].trim().equals("05");
     }
 
-    public void resetTotalTime(){
+    void resetTotalTime(){
         String timeZero = "00:00";
         saveTimeToFile(timeZero);
         readTotalTimeFromFile();

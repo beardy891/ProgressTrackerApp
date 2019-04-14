@@ -6,6 +6,7 @@
     <string name="stop_button">STOP</string>
     <string name="resume_button">RESUME</string>
     <string name="progress_details">Progress details</string>
-    <string name="start_counting">Start counting</string>
+    <string name="start_counting">Start timer</string>
     <string name="reset_total_time">Reset total time</string>
+    <string name="time_zero">00:00</string>
 </resources>

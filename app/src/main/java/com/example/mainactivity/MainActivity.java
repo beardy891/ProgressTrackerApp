@@ -1,30 +1,27 @@
 package com.example.mainactivity;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
-import android.widget.Toast;
+
 // TODO: 11.04.2019 REFACTOR TO Model View Presenter
 import com.example.mainactivity.notActivities.MenuActions;
 import com.example.mainactivity.notActivities.ReadWriteTotalTime;
 
-public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE EVERYTHING LOCAL
+public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE EVERYTHING LOCAL then store data in g.sheets
     private static final String TAG = MainActivity.class.getSimpleName();// TODO: 28.03.2019 what should I LOG
     private static final String ON_SAVE_INSTANCE_TIME_KEY = "total time";
 
     private Button mStartStopButton;
     private Chronometer mPomodoroTimer;
     private TextView mTimeTotal;//todo: visible: 5-10 sek every 25 minutes
-    private ReadWriteTotalTime mTimeToFile;
+    private ReadWriteTotalTime mTimeToFile;//todo: bad variable name ?
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {// TODO: create initViews method
@@ -44,18 +41,14 @@ public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE E
             long pauseTime;
 
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {// TODO: 11.04.2019 implement OnClickListener in different way, this is messy
 
             //todo: count down from 25 minutes if(00) start countdown from 5 minutes then repeat until stopped
                 startStopChronometer();
 
-                /*mPomodoroTimer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-                    @Override
-                    public void onChronometerTick(Chronometer chronometer) {*/
-                        mTimeToFile.saveTotalTimeEveryMinute(mPomodoroTimer);
-                        mTimeToFile.showTotalTimeEveryMinute(mPomodoroTimer, mTimeTotal);
-                /*    }
-                });*/
+                mTimeToFile.saveTotalTimeEveryMinute(mPomodoroTimer);
+                mTimeToFile.showTotalTimeEveryMinute(mPomodoroTimer, mTimeTotal);
+
             }
 
             private void startStopChronometer() {//todo: maybe move outside onClickListener inner class
@@ -98,7 +91,6 @@ public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE E
 
     private void initializeViews() {
         mTimeTotal = findViewById(R.id.tv_time_total);
-
         mStartStopButton = findViewById(R.id.bt_stat_stop_pomodoro);
         mPomodoroTimer = findViewById(R.id.chrono_pomodoro_timer);
     }
@@ -115,9 +107,11 @@ public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE E
         int itemId = item.getItemId();
 
         switch(itemId){
-            case R.id.reset_action:
-                MenuActions.resetTime(mTimeToFile, TAG, this);
+            case R.id.reset_action:{
+                MenuActions.resetTime(mTimeToFile,this);
+                mTimeTotal.setText(getString(R.string.time_zero));
                 return true;
+            }
             case R.id.browser_action:
                 MenuActions.aboutPomodoro(this);
                 return true;
@@ -129,29 +123,6 @@ public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE E
         return super.onOptionsItemSelected(item);
     }
 
-    // TODO: 27.03.2019 move aboutPomodoro and resetTime to another class
-    /*private void aboutPomodoro() {
-        String webPageAddress = "https://en.wikipedia.org/wiki/Pomodoro_Technique";
-        Uri webPageUri = Uri.parse(webPageAddress);
-
-        Intent openBrowser = new Intent(Intent.ACTION_VIEW, webPageUri);
-
-        if(openBrowser.resolveActivity(getPackageManager()) != null){
-            startActivity(openBrowser);
-        }
-    }*/
-
-    /*private void resetTime(ReadWriteTotalTime timeToFile){
-        if(timeToFile != null){
-            timeToFile.resetTotalTime();
-        } else {
-            String errorMessage = "System could not reset the time";
-            Log.e(TAG, errorMessage);
-            Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();// TODO: 11.04.2019 think of different ways to display error messages
-        }// TODO: 05.04.2019 else show error message
-
-    }*/
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         String totalTime = mPomodoroTimer.getText().toString();
@@ -159,10 +130,6 @@ public class MainActivity extends AppCompatActivity { // TODO: 28.03.2019 MAKE E
         outState.putString(ON_SAVE_INSTANCE_TIME_KEY, totalTime);
 
         super.onSaveInstanceState(outState);//call after putting in data that u want to save
-    }
-
-    public TextView getPomodoroTextView(){
-        return mPomodoroTimer;
     }
 
 }
