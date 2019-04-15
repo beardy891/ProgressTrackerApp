@@ -6,7 +6,8 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
-public class MenuActions {
+
+public class MenuActions{
     public static void aboutPomodoro(Context context) { // TODO: 11.04.2019 is it good idea to have class just for handling menu actions, static ?????
         String webPageAddress = "https://en.wikipedia.org/wiki/Pomodoro_Technique";
         Uri webPageUri = Uri.parse(webPageAddress);
